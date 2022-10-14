@@ -92,17 +92,13 @@ const SongGroup = ({channel}: SongGroupProps) => {
     }
   });
   const gotToDetail = useMemoizedFn((item: songGroupItem) => {
-    console.log(item);
-
-    navigation.navigate('SongGroupDetail', {
-      ...item,
-    });
+    navigation.navigate('SongGroupDetail', item);
   });
   const renderItem = useMemoizedFn(
     ({item}: ListRenderItemInfo<songGroupItem>) => {
       return (
         <TouchableHighlight
-          underlayColor={''}
+          underlayColor="#DDDDDD"
           onPress={() => gotToDetail(item)}>
           <View style={[styles.items]}>
             <View style={[styles.listen]}>

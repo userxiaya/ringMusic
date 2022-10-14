@@ -1,9 +1,11 @@
+import {songGroupItem} from '@/utils/types';
 import type {StackScreenProps} from '@react-navigation/stack';
 
 export type RootStackParamList = {
   Home: undefined;
   PlayerScreen: {id: string};
-  SongGroupDetail: {id: string};
+  SongGroupDetail: songGroupItem;
+  SongGroupDesc: {id: string};
   NotFound: undefined;
   Search: undefined;
 };

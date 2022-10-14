@@ -23,12 +23,16 @@ export default StyleSheet.create({
   },
   top_container_desc: {
     width: '100%',
-    height: 30,
+    height: 20,
     overflow: 'hidden',
     backgroundColor: 'transparent',
+    lineHeight: 20,
+    color: '#ffffff',
   },
   mess_content: {
     position: 'absolute',
+    width: '100%',
+    height: '100%',
     top: 0,
     left: 0,
     paddingLeft: 105,
@@ -67,7 +71,7 @@ export default StyleSheet.create({
   },
   desc: {
     marginTop: 5,
-    flex: 1,
+    height: 20,
     position: 'relative',
     paddingRight: 15,
     overflow: 'hidden',

@@ -1,73 +1,12 @@
-import {AxiosRequestConfig} from 'axios';
 import request from '@/utils/request';
-import {playDetail, songGroupData, songItemState} from '@/utils/types';
-
-const baseUrl1 = 'https://c.y.qq.com';
-const baseUrl2 = 'https://u.y.qq.com';
-const baseUrl3 = 'https://i.y.qq.com';
-
-interface Tag {
-  id: number;
-  name: string;
-  pid: number;
-}
-
-interface Pay {
-  payalbum: number;
-  payalbumprice: number;
-  paydownload: number;
-  payinfo: number;
-  payplay: number;
-  paytrackmouth: number;
-  paytrackprice: number;
-  timefree: number;
-}
-
-interface Preview {
-  trybegin: number;
-  tryend: number;
-  trysize: number;
-}
-
-interface Singer {
-  id: number;
-  mid: string;
-  name: string;
-}
-
-interface SonglistItem {
-  albumdesc: string;
-  albumid: number;
-  albummid: string;
-  albumname: string;
-  alertid: number;
-  belongCD: number;
-  cdIdx: number;
-  interval: number;
-  isonly: number;
-  label: string;
-  msgid: number;
-  pay: Pay;
-  preview: Preview;
-  rate: number;
-  singer: Singer[];
-  size128: number;
-  size320: number;
-  size5_1: number;
-  sizeape: number;
-  sizeflac: number;
-  sizeogg: number;
-  songid: number;
-  songmid: string;
-  songname: string;
-  songorig: string;
-  songtype: number;
-  strMediaMid: string;
-  stream: number;
-  switch: number;
-  type: number;
-  vid: string;
-}
+import {
+  JSONObject,
+  playDetail,
+  searchSongData,
+  songGroupData,
+  songItemState,
+} from '@/utils/types';
+import {AxiosRequestConfig} from 'axios';
 
 function getImageUrl(qqimgid: string, imgType: 'artist' | 'album') {
   if (qqimgid == null) {
@@ -84,7 +23,15 @@ function getImageUrl(qqimgid: string, imgType: 'artist' | 'album') {
   const url = `https://y.gtimg.cn/music/photo_new/${s}.jpg`;
   return url;
 }
-const songItemCover = (items: SonglistItem): songItemState => {
+const requestQQ = (option: AxiosRequestConfig) => {
+  return request<JSONObject>({
+    ...option,
+    headers: {
+      Referer: 'https://y.qq.com/',
+    },
+  });
+};
+const songItemCover = (items: JSONObject): songItemState => {
   return {
     id: `QQ_${items.songid}`,
     songmid: items.songmid,
@@ -94,20 +41,16 @@ const songItemCover = (items: SonglistItem): songItemState => {
     coverImage: getImageUrl(items.albummid, 'album'),
     singer: items.singer.map((s: {id: number; name: string}) => {
       return {
-        id: `${s.id}`,
+        id: s.id,
         name: s.name,
       };
     }),
     channel: 'QQ',
   };
 };
-const requestQQ = <T>(option: AxiosRequestConfig) =>
-  request<T>({
-    ...option,
-    headers: {
-      Referer: 'https://y.qq.com/',
-    },
-  });
+const baseUrl1 = 'https://c.y.qq.com';
+const baseUrl2 = 'https://u.y.qq.com';
+const baseUrl3 = 'https://i.y.qq.com';
 /**
  *
  * @param current 当前页
@@ -118,41 +61,11 @@ export const getSongGroupListApi = (params?: {
   current?: number;
   pageSize?: number;
 }): Promise<songGroupData> => {
-  const {current = 1, pageSize = 30} = params || {};
+  const {current = 1, pageSize = 10} = params || {};
   const sin = (current - 1) * pageSize;
   const ein = current * pageSize - 1;
-  interface listItem {
-    dissid: string;
-    createtime: string;
-    commit_time: string;
-    dissname: string;
-    imgurl: string;
-    introduction: string;
-    listennum: number;
-    score: number;
-    version: number;
-    creator: {
-      type: number;
-      qq: number;
-      encrypt_uin: string;
-      name: string;
-      isVip: number;
-      avatarUrl: string;
-      followflag: number;
-    };
-  }
-  //接口返回
-  interface ResponseData {
-    uin: number;
-    categoryId: number;
-    sortId: number;
-    sum: number;
-    sin: number;
-    ein: number;
-    list: listItem[];
-  }
   return new Promise((resolve, reject) => {
-    requestQQ<{data: ResponseData}>({
+    requestQQ({
       baseURL: baseUrl1,
       url: '/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg',
       method: 'GET',
@@ -177,7 +90,7 @@ export const getSongGroupListApi = (params?: {
       .then(({data}) => {
         const result: songGroupData = {
           total: data.sum,
-          list: data.list.map((e: listItem) => ({
+          list: data.list.map((e: JSONObject) => ({
             updateTime: e?.commit_time,
             createtime: e?.createtime,
             creator: {
@@ -198,68 +111,10 @@ export const getSongGroupListApi = (params?: {
       });
   });
 };
-
 //获取歌单详情
 export const getPlayDetailApi = (id: string): Promise<playDetail> => {
-  interface Cdlist {
-    disstid: string;
-    dir_show: number;
-    owndir: number;
-    dirid: number;
-    coveradurl: string;
-    dissid: number;
-    login: string;
-    uin: string;
-    encrypt_uin: string;
-    dissname: string;
-    logo: string;
-    pic_mid: string;
-    album_pic_mid: string;
-    pic_dpi: number;
-    isAd: number;
-    desc: string;
-    ctime: number;
-    mtime: number;
-    headurl: string;
-    ifpicurl: string;
-    nick: string;
-    nickname: string;
-    type: number;
-    singerid: number;
-    singermid: string;
-    isvip: number;
-    isdj: number;
-    tags: Tag[];
-    songnum: number;
-    songids: string;
-    songtypes: string;
-    disstype: number;
-    dir_pic_url2: string;
-    song_update_time: number;
-    song_update_num: number;
-    total_song_num: number;
-    song_begin: number;
-    cur_song_num: number;
-    songlist: Array<SonglistItem>;
-    visitnum: number;
-    cmtnum: number;
-    buynum: number;
-    scoreavage: string;
-    scoreusercount: number;
-  }
-
-  interface ResponseData {
-    code: number;
-    subcode: number;
-    accessed_plaza_cache: number;
-    accessed_favbase: number;
-    login: string;
-    cdnum: number;
-    cdlist: Cdlist[];
-    realcdnum: number;
-  }
   return new Promise((resolve, reject) => {
-    requestQQ<ResponseData>({
+    requestQQ({
       url: '/qzone-music/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg',
       method: 'GET',
       baseURL: baseUrl3,
@@ -290,7 +145,7 @@ export const getPlayDetailApi = (id: string): Promise<playDetail> => {
           userIcon: data.headurl,
           imageUrl: data.logo,
           name: data.dissname,
-          tagList: data.tags.map(t => {
+          tagList: data.tags.map((t: JSONObject) => {
             return {
               name: t.name,
             };
@@ -304,7 +159,6 @@ export const getPlayDetailApi = (id: string): Promise<playDetail> => {
       });
   });
 };
-
 // 获取歌曲地址
 export const getMusicUrlApi = (id: string): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -338,12 +192,68 @@ export const getMusicUrlApi = (id: string): Promise<string> => {
         },
       },
     })
-      .then((data: any) => {
+      .then(data => {
         if (data.req_0.data.midurlinfo[0].purl === '') {
           return resolve('');
         }
         const url = data.req_0.data.sip[0] + data.req_0.data.midurlinfo[0].purl;
         resolve(url);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+};
+//搜索
+export const searchApi = (params?: {
+  current?: number;
+  pageSize?: number;
+  keyword?: string;
+}): Promise<searchSongData> => {
+  console.log('QQSearch');
+  const {current = 1, pageSize = 30, keyword = ''} = params || {};
+  return new Promise((resolve, reject) => {
+    if (!keyword) {
+      resolve({
+        total: 0,
+        list: [],
+      });
+      return;
+    }
+    requestQQ({
+      url: '/soso/fcgi-bin/client_search_cp',
+      method: 'GET',
+      baseURL: baseUrl1,
+      params: {
+        g_tk: '938407465',
+        uin: 0,
+        format: 'json',
+        inCharset: 'utf-8',
+        outCharset: 'utf-8',
+        notice: 0,
+        platform: 'h5',
+        needNewCode: 1,
+        w: keyword,
+        zhidaqu: 1,
+        catZhida: 1,
+        t: 0,
+        flag: 1,
+        ie: 'utf-8',
+        sem: 1,
+        aggr: 0,
+        perpage: pageSize,
+        n: pageSize,
+        p: current,
+        remoteplace: 'txt.mqq.all',
+        _: 1459991037831,
+      },
+    })
+      .then(({data}) => {
+        const {song = {}} = data;
+        resolve({
+          total: song.totalnum || 0,
+          list: (song.list || []).map(songItemCover),
+        });
       })
       .catch(err => {
         reject(err);

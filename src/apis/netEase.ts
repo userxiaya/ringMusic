@@ -1,314 +1,18 @@
-import {AxiosRequestConfig} from 'axios';
 import request from '@/utils/request';
 import queryString from 'query-string';
 import {weapi} from '@/utils/cypto';
 import moment from 'moment';
-import {playDetail, songGroupData, songItemState} from '@/utils/types';
+import {
+  JSONObject,
+  playDetail,
+  searchSongData,
+  songGroupData,
+  songItemState,
+} from '@/utils/types';
+import {AxiosRequestConfig} from 'axios';
 
-const baseUrl1: string = 'https://music.163.com';
-
-interface AvatarDetail {
-  userType: number;
-  identityLevel: number;
-  identityIconUrl: string;
-}
-
-interface Creator {
-  defaultAvatar: boolean;
-  province: number;
-  authStatus: number;
-  followed: boolean;
-  avatarUrl: string;
-  accountStatus: number;
-  gender: number;
-  city: number;
-  birthday: number;
-  userId: number;
-  userType: number;
-  nickname: string;
-  signature: string;
-  description: string;
-  detailDescription: string;
-  avatarImgId: number;
-  backgroundImgId: number;
-  backgroundUrl: string;
-  authority: number;
-  mutual: boolean;
-  expertTags?: any;
-  experts?: any;
-  djStatus: number;
-  vipType: number;
-  remarkName?: any;
-  authenticationTypes: number;
-  avatarDetail: AvatarDetail;
-  anchor: boolean;
-  avatarImgIdStr: string;
-  backgroundImgIdStr: string;
-  avatarImgId_str: string;
-}
-
-interface Ar {
-  id: number;
-  name: string;
-  tns: any[];
-  alias: any[];
-}
-
-interface Al {
-  id: number;
-  name: string;
-  picUrl: string;
-  tns: any[];
-  pic_str: string;
-  pic: number;
-}
-
-interface H {
-  br: number;
-  fid: number;
-  size: number;
-  vd: number;
-  sr: number;
-}
-
-interface M {
-  br: number;
-  fid: number;
-  size: number;
-  vd: number;
-  sr: number;
-}
-
-interface L {
-  br: number;
-  fid: number;
-  size: number;
-  vd: number;
-  sr: number;
-}
-
-interface Sq {
-  br: number;
-  fid: number;
-  size: number;
-  vd: number;
-  sr: number;
-}
-
-interface Hr {
-  br: number;
-  fid: number;
-  size: number;
-  vd: number;
-  sr: number;
-}
-
-interface Track {
-  name: string;
-  id: number;
-  pst: number;
-  t: number;
-  ar: Ar[];
-  alia?: any[];
-  pop: number;
-  st: number;
-  rt: string;
-  fee: number;
-  v: number;
-  crbt?: any;
-  cf: string;
-  al: Al;
-  dt: number;
-  h: H;
-  m: M;
-  l: L;
-  sq: Sq;
-  hr: Hr;
-  a?: any;
-  cd: string;
-  no: number;
-  rtUrl?: any;
-  ftype: number;
-  rtUrls: any[];
-  djId: number;
-  copyright: number;
-  s_id: number;
-  mark: number;
-  originCoverType: number;
-  originSongSimpleData?: any;
-  tagPicList?: any;
-  resourceState: boolean;
-  version: number;
-  songJumpInfo?: any;
-  entertainmentTags?: any;
-  single: number;
-  noCopyrightRcmd?: any;
-  rurl?: any;
-  rtype: number;
-  mst: number;
-  cp: number;
-  mv: number;
-  publishTime: number;
-  alg: string;
-}
-
-interface TrackId {
-  id: number;
-  v: number;
-  t: number;
-  at: number;
-  alg: string;
-  uid: number;
-  rcmdReason: string;
-  sc?: any;
-}
-
-interface Playlist {
-  id: number;
-  name: string;
-  coverImgId: number;
-  coverImgUrl: string;
-  coverImgId_str: string;
-  adType: number;
-  userId: number;
-  createTime: number;
-  status: number;
-  opRecommend: boolean;
-  highQuality: boolean;
-  newImported: boolean;
-  updateTime: number;
-  trackCount: number;
-  specialType: number;
-  privacy: number;
-  trackUpdateTime: number;
-  commentThreadId: string;
-  playCount: number;
-  trackNumberUpdateTime: number;
-  subscribedCount: number;
-  cloudTrackCount: number;
-  ordered: boolean;
-  description: string;
-  tags: string[];
-  updateFrequency: string;
-  backgroundCoverId: number;
-  backgroundCoverUrl: string;
-  titleImage: number;
-  titleImageUrl: string;
-  englishTitle: string;
-  officialPlaylistType: string;
-  copied: boolean;
-  subscribers: any[];
-  subscribed?: any;
-  creator: Creator;
-  tracks: Track[];
-  videoIds?: any;
-  videos?: any;
-  trackIds: TrackId[];
-  bannedTrackIds?: any;
-  shareCount: number;
-  commentCount: number;
-  remixVideo?: any;
-  sharedUsers?: any;
-  historySharedUsers?: any;
-  gradeStatus: string;
-  score?: any;
-  algTags?: any;
-}
-
-interface FreeTrialPrivilege {
-  resConsumable: boolean;
-  userConsumable: boolean;
-  listenType?: any;
-}
-
-interface ChargeInfoList {
-  rate: number;
-  chargeUrl?: any;
-  chargeMessage?: any;
-  chargeType: number;
-}
-interface Song {
-  name: string;
-  id: number;
-  pst: number;
-  t: number;
-  ar: Ar[];
-  alia?: any[];
-  pop: number;
-  st: number;
-  rt: string;
-  fee: number;
-  v: number;
-  crbt?: any;
-  cf: string;
-  al: Al;
-  dt: number;
-  h: H;
-  m: M;
-  l: L;
-  sq: Sq;
-  hr: Hr;
-  a?: any;
-  cd: string;
-  no: number;
-  rtUrl?: any;
-  ftype: number;
-  rtUrls: any[];
-  djId: number;
-  copyright: number;
-  s_id: number;
-  mark: number;
-  originCoverType: number;
-  originSongSimpleData?: any;
-  tagPicList?: any;
-  resourceState: boolean;
-  version: number;
-  songJumpInfo?: any;
-  entertainmentTags?: any;
-  awardTags?: any;
-  single: number;
-  noCopyrightRcmd?: any;
-  rtype: number;
-  rurl?: any;
-  mst: number;
-  cp: number;
-  mv: number;
-  publishTime: number;
-}
-interface Privilege {
-  id: number;
-  fee: number;
-  payed: number;
-  realPayed: number;
-  st: number;
-  pl: number;
-  dl: number;
-  sp: number;
-  cp: number;
-  subp: number;
-  cs: boolean;
-  maxbr: number;
-  fl: number;
-  pc?: any;
-  toast: boolean;
-  flag: number;
-  paidBigBang: boolean;
-  preSell: boolean;
-  playMaxbr: number;
-  downloadMaxbr: number;
-  maxBrLevel: string;
-  playMaxBrLevel: string;
-  downloadMaxBrLevel: string;
-  plLevel: string;
-  dlLevel: string;
-  flLevel: string;
-  rscl?: any;
-  freeTrialPrivilege: FreeTrialPrivilege;
-  chargeInfoList: ChargeInfoList[];
-}
-
-const requestNetEase = <T>(option: AxiosRequestConfig) => {
-  return request<T>({
+const requestNetEase = (option: AxiosRequestConfig) => {
+  return request<JSONObject>({
     ...option,
     data: queryString.stringify(weapi(option.data)),
     headers: {
@@ -319,37 +23,34 @@ const requestNetEase = <T>(option: AxiosRequestConfig) => {
     },
   });
 };
-const songItemCover = (items: Song): songItemState => ({
+
+const baseUrl1: string = 'https://music.163.com';
+const songItemCover = (items: JSONObject): songItemState => ({
   id: `netEase_${items.id}`,
-  songId: `${items.id}`,
+  songId: items.id,
   name: items.name,
   isVip: false,
   coverImage: items.al.picUrl,
   singer: items.ar.map((e: {id: number; name: string}) => ({
-    id: `${e.id}`,
+    id: e.id,
     name: e.name,
   })),
   channel: 'netEase',
 });
-const querySongList = (trackIds: number[]): Promise<songItemState[]> => {
+const querySongList = (trackIds: string[]): Promise<songItemState[]> => {
   return new Promise((resolve, reject) => {
     const data = {
       c: '[' + trackIds.map(id => '{"id":' + id + '}').join(',') + ']',
       ids: '[' + trackIds.join(',') + ']',
     };
-    interface ResponseData {
-      songs: Song[];
-      privileges: Privilege[];
-      code: number;
-    }
-    requestNetEase<ResponseData>({
+    requestNetEase({
       url: '/weapi/v3/song/detail',
       method: 'POST',
       baseURL: baseUrl1,
       data,
     })
       .then(res => {
-        const list: Song[] = res?.songs || [];
+        const list: JSONObject[] = res?.songs || [];
         const result: songItemState[] = list.map(songItemCover);
         resolve(result);
       })
@@ -377,124 +78,7 @@ export const getSongGroupListApi = (params?: {
     total: true,
   };
   return new Promise((resolve, reject) => {
-    // 返回数据ts格式 start
-    // interface AvatarDetail {
-    //   userType: number;
-    //   identityLevel: number;
-    //   identityIconUrl: string;
-    // }
-    // interface Creator {
-    //   defaultAvatar: boolean;
-    //   province: number;
-    //   authStatus: number;
-    //   followed: boolean;
-    //   avatarUrl: string;
-    //   accountStatus: number;
-    //   gender: number;
-    //   city: number;
-    //   birthday: number;
-    //   userId: number;
-    //   userType: number;
-    //   nickname: string;
-    //   signature: string;
-    //   description: string;
-    //   detailDescription: string;
-    //   avatarImgId: number;
-    //   backgroundImgId: number;
-    //   backgroundUrl: string;
-    //   authority: number;
-    //   mutual: boolean;
-    //   expertTags?: any;
-    //   experts?: any;
-    //   djStatus: number;
-    //   vipType: number;
-    //   remarkName?: any;
-    //   authenticationTypes: number;
-    //   avatarDetail: AvatarDetail;
-    //   anchor: boolean;
-    //   avatarImgIdStr: string;
-    //   backgroundImgIdStr: string;
-    //   avatarImgId_str: string;
-    // }
-    // interface Subscriber {
-    //   defaultAvatar: boolean;
-    //   province: number;
-    //   authStatus: number;
-    //   followed: boolean;
-    //   avatarUrl: string;
-    //   accountStatus: number;
-    //   gender: number;
-    //   city: number;
-    //   birthday: number;
-    //   userId: number;
-    //   userType: number;
-    //   nickname: string;
-    //   signature: string;
-    //   description: string;
-    //   detailDescription: string;
-    //   avatarImgId: number;
-    //   backgroundImgId: number;
-    //   backgroundUrl: string;
-    //   authority: number;
-    //   mutual: boolean;
-    //   expertTags?: any;
-    //   experts?: any;
-    //   djStatus: number;
-    //   vipType: number;
-    //   remarkName?: any;
-    //   authenticationTypes: number;
-    //   avatarDetail?: any;
-    //   anchor: boolean;
-    //   avatarImgIdStr: string;
-    //   backgroundImgIdStr: string;
-    //   avatarImgId_str: string;
-    // }
-    // interface Playlist {
-    //   name: string;
-    //   id: number;
-    //   trackNumberUpdateTime: number;
-    //   status: number;
-    //   userId: number;
-    //   createTime: number;
-    //   updateTime: number;
-    //   subscribedCount: number;
-    //   trackCount: number;
-    //   cloudTrackCount: number;
-    //   coverImgUrl: string;
-    //   coverImgId: number;
-    //   description: string;
-    //   tags: string[];
-    //   playCount: number;
-    //   trackUpdateTime: number;
-    //   specialType: number;
-    //   totalDuration: number;
-    //   creator: Creator;
-    //   tracks?: any;
-    //   subscribers: Subscriber[];
-    //   subscribed?: any;
-    //   commentThreadId: string;
-    //   newImported: boolean;
-    //   adType: number;
-    //   highQuality: boolean;
-    //   privacy: number;
-    //   ordered: boolean;
-    //   anonimous: boolean;
-    //   coverStatus: number;
-    //   recommendInfo?: any;
-    //   shareCount: number;
-    //   coverImgId_str: string;
-    //   alg: string;
-    //   commentCount: number;
-    // }
-    interface ResponseData {
-      playlists: Playlist[];
-      total: number;
-      code: number;
-      more: boolean;
-      cat: string;
-    }
-    // 返回数据ts格式 end
-    requestNetEase<ResponseData>({
+    requestNetEase({
       url: '/weapi/playlist/list',
       method: 'POST',
       baseURL: baseUrl1,
@@ -503,7 +87,7 @@ export const getSongGroupListApi = (params?: {
       .then(res => {
         const result: songGroupData = {
           total: res.total,
-          list: res.playlists.map((items: any) => ({
+          list: res.playlists.map((items: JSONObject) => ({
             updateTime: moment(items?.updateTime).format('YYYY-MM-dd'),
             createtime: moment(items?.createTime).format('YYYY-MM-dd'),
             creator: {
@@ -535,16 +119,7 @@ export const getPlayDetailApi = (id: string): Promise<playDetail> => {
       n: 1000,
       csrf_token: '',
     };
-    interface ResponseData {
-      code: number;
-      relatedVideos?: any;
-      playlist: Playlist;
-      urls?: any;
-      privileges: Privilege[];
-      sharedPrivilege?: any;
-      resEntrance?: any;
-    }
-    requestNetEase<ResponseData>({
+    requestNetEase({
       url: '/weapi/v3/playlist/detail',
       method: 'POST',
       baseURL: baseUrl1,
@@ -566,13 +141,13 @@ export const getPlayDetailApi = (id: string): Promise<playDetail> => {
           songList = [...songList, ...lists];
         });
         const result: playDetail = {
-          id: `${data.id}`,
+          id: data.id,
           userName: data.creator.nickname,
           desc: data.description,
           userIcon: data.creator.avatarUrl,
           imageUrl: data.coverImgUrl,
           name: data.name,
-          tagList: data.tags.map((name: any) => {
+          tagList: data.tags.map((name: JSONObject) => {
             return {
               name,
             };
@@ -586,7 +161,6 @@ export const getPlayDetailApi = (id: string): Promise<playDetail> => {
       });
   });
 };
-
 export const getMusicUrlApi = (id: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const data = {
@@ -601,12 +175,48 @@ export const getMusicUrlApi = (id: string): Promise<string> => {
       baseURL: baseUrl1,
       data,
     })
-      .then(async (res: any) => {
+      .then(async res => {
         const {url: songUrl} = res.data[0];
         if (songUrl === null) {
           return resolve('');
         }
         resolve(songUrl);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+};
+export const searchApi = (params?: {
+  current?: number;
+  pageSize?: number;
+  keyword?: string;
+}): Promise<searchSongData> => {
+  console.log('netEaseSearch');
+  return new Promise((resolve, reject) => {
+    const {keyword = '', pageSize = 30, current = 1} = params || {};
+    const data = {
+      csrf_token: '',
+      hlposttag: '</span>',
+      hlpretag: '<span class="s-fc7">',
+      limit: pageSize,
+      offset: (pageSize * (current - 1)).toString(),
+      s: keyword,
+      total: 'false',
+      type: '1',
+    };
+    requestNetEase({
+      url: '/weapi/cloudsearch/get/web',
+      method: 'POST',
+      baseURL: baseUrl1,
+      data,
+    })
+      .then(res => {
+        const {result = {}} = res;
+        resolve({
+          total: result.songCount,
+          list: result.songs.map(songItemCover),
+        });
       })
       .catch(err => {
         reject(err);

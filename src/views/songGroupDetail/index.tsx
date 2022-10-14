@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {
   FlatList,
   Image,
@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
+  TouchableHighlight,
   View,
 } from 'react-native';
 import {useCreation, useMemoizedFn, useRequest, useSafeState} from 'ahooks';
@@ -20,8 +21,8 @@ import {getPlayDetailApi as kugouDetail} from '@/apis/kugou';
 import Header from '@/components/header';
 import styles from './style';
 import SongItem from '@/components/songItem';
-import {useRoute} from '@react-navigation/native';
-import {WebView} from 'react-native-webview';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {ThemeContext} from '@/store/theme';
 
 const apiMap: {
   [name: string]: (id: string) => Promise<playDetail>;
@@ -35,13 +36,16 @@ interface DetailHeaderProps {
   playInfo?: playDetail;
   headerHeight?: number;
   LinearColors?: string[];
+  groupData: songGroupItem;
 }
 
 function DetailHeader({
   playInfo,
   headerHeight = 0,
   LinearColors = [],
+  groupData,
 }: DetailHeaderProps) {
+  const navigation = useNavigation();
   const headerHeightStyle = useCreation(() => {
     return StyleSheet.create({
       style: {
@@ -49,22 +53,16 @@ function DetailHeader({
       },
     });
   }, [headerHeight]);
-
+  const gotToDesc = useMemoizedFn(() => {
+    navigation.navigate('SongGroupDesc', groupData);
+  });
   const Desc = useCreation(() => {
     const str = (playInfo?.desc || '').replace(/<br\/>|<br>/g, '');
     return (
       playInfo?.desc && (
-        <WebView
-          originWhitelist={['*']}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          source={{
-            html: `<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-                   <style>html,body{width:100%;height:100%;font-size:6.2vw;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:100%}</style>
-                   </head><body>${str}</body></html>`,
-          }}
-          style={styles.top_container_desc}
-        />
+        <Text style={styles.top_container_desc} numberOfLines={1}>
+          {str}
+        </Text>
       )
     );
   }, [playInfo]);
@@ -88,15 +86,21 @@ function DetailHeader({
             <Image style={styles.userIcon} source={{uri: playInfo?.userIcon}} />
             <Text style={[styles.userName_text]}>{playInfo?.userName}</Text>
           </View>
-          <View style={[styles.desc]}>
-            {Desc}
-            <View style={[styles.desc_icon_content]}>
-              <Image
-                style={[styles.desc_icon]}
-                source={require('@/assets/image/next.png')}
-              />
+          <TouchableHighlight
+            underlayColor={''}
+            onPress={() => {
+              gotToDesc();
+            }}>
+            <View style={[styles.desc]}>
+              {Desc}
+              <View style={[styles.desc_icon_content]}>
+                <Image
+                  style={[styles.desc_icon]}
+                  source={require('@/assets/image/next.png')}
+                />
+              </View>
             </View>
-          </View>
+          </TouchableHighlight>
         </View>
       </View>
     </LinearGradient>
@@ -168,11 +172,12 @@ const SongGroupDetail = () => {
   const onHeadLayout = useMemoizedFn(({nativeEvent}: LayoutChangeEvent) => {
     setHeaderHeight(nativeEvent.layout.height);
   });
+  const {state: theme} = useContext(ThemeContext);
   const headContainer = useCreation(() => {
     const opacity = scrollY / 190; //列表头部元素高度
     return (
       <Header
-        color={'#fff'}
+        color={theme?.text_color}
         onLayout={onHeadLayout}
         title={opacity > 0.7 ? playInfo?.name : '歌单'}
         style={[styles.header]}
@@ -187,6 +192,7 @@ const SongGroupDetail = () => {
         headerHeight={headerHeight}
         playInfo={playInfo}
         LinearColors={LinearColors}
+        groupData={params}
       />
     );
   }, [playInfo, LinearColors]);

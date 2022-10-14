@@ -8,6 +8,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import Home from '@/views/home';
 import PlayerScreen from './PlayerScreen';
 import SongGroupDetail from '@/views/songGroupDetail';
+import SongGroupDesc from '@/views/songGroupDesc';
 
 const options = {
   transitionSpec: {
@@ -33,6 +34,7 @@ interface RouterConfig {
 const routesList: RouterConfig[] = [
   {name: 'Home', component: Home},
   {name: 'SongGroupDetail', component: SongGroupDetail},
+  {name: 'SongGroupDesc', component: SongGroupDesc},
 ];
 const Stack = createStackNavigator();
 const Router = () => {

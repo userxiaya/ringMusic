@@ -84,7 +84,7 @@ const Header = ({
   rightContent,
   style: propsStyle,
   onLayout,
-  LinearColors = ['#fff', '#fff'],
+  LinearColors,
   opacity = 1,
 }: HeaderProps) => {
   const navigation = useNavigation();
@@ -107,12 +107,14 @@ const Header = ({
   }, [routesLength, color]);
   return (
     <View onLayout={onLayout} style={[styles.header, propsStyle]}>
-      <LinearGradient
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
-        style={[styles.header_container, {opacity}]}
-        colors={LinearColors}
-      />
+      {LinearColors && (
+        <LinearGradient
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 1}}
+          style={[styles.header_container, {opacity}]}
+          colors={LinearColors}
+        />
+      )}
       <View style={styles.relative}>
         {leftContent ?? backContent}
         <Text

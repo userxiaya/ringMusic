@@ -19,7 +19,7 @@ const getSingerName = (singer?: SingerItem[]) => {
 const SongItem = ({item}: SongItemProps) => {
   return (
     <TouchableHighlight
-      underlayColor={''}
+      underlayColor="#DDDDDD"
       onPress={() => {
         addSong(item);
       }}>
