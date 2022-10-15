@@ -257,12 +257,12 @@ export const searchApi = (params?: {
       },
     })
       .then(res => {
-        const data = res?.req?.data?.body || {};
-        const {song = {}} = data;
+        const {body = {}, meta = {}} = res?.req?.data || {};
+        const {song = {}} = body;
         console.log(song.list.length);
 
         resolve({
-          total: song.totalnum || 0,
+          total: meta.estimate_sum || 0,
           list: (song.list || []).map(searchSongItemCover),
         });
       })

@@ -15,7 +15,7 @@ export const SetupService = async (): Promise<boolean> => {
         Capability.Pause,
         Capability.SkipToNext,
         Capability.SkipToPrevious,
-        // Capability.Stop,
+        Capability.Stop,
       ],
       compactCapabilities: [
         Capability.Play,
