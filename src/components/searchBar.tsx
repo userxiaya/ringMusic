@@ -11,7 +11,7 @@ import {Picker} from '@react-native-picker/picker';
 import {ThemeContext} from '@/store/theme';
 import Icon from '@/components/icon';
 import {Text} from 'react-native-elements';
-import {songChannel} from '@/types';
+import {songChannel} from '@/utils/types';
 import {songChannelList} from '@/utils/tools';
 import {useControllableValue, useCreation} from 'ahooks';
 const {StatusBarManager} = NativeModules;

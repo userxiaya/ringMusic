@@ -9,6 +9,7 @@ import Home from '@/views/home';
 import PlayerScreen from './PlayerScreen';
 import SongGroupDetail from '@/views/songGroupDetail';
 import SongGroupDesc from '@/views/songGroupDesc';
+import Search from '@/views/search';
 
 const options = {
   transitionSpec: {
@@ -35,6 +36,7 @@ const routesList: RouterConfig[] = [
   {name: 'Home', component: Home},
   {name: 'SongGroupDetail', component: SongGroupDetail},
   {name: 'SongGroupDesc', component: SongGroupDesc},
+  {name: 'Search', component: Search},
 ];
 const Stack = createStackNavigator();
 const Router = () => {

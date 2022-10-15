@@ -48,6 +48,23 @@ const songItemCover = (items: JSONObject): songItemState => {
     channel: 'QQ',
   };
 };
+const searchSongItemCover = (items: JSONObject): songItemState => {
+  return {
+    id: `QQ_${items.id}`,
+    songmid: items.mid,
+    songId: items.mid,
+    name: items.name,
+    isVip: items?.pay?.payplay === 1,
+    coverImage: getImageUrl(items.album.mid, 'album'),
+    singer: items.singer.map((s: {id: number; name: string}) => {
+      return {
+        id: s.id,
+        name: s.name,
+      };
+    }),
+    channel: 'QQ',
+  };
+};
 const baseUrl1 = 'https://c.y.qq.com';
 const baseUrl2 = 'https://u.y.qq.com';
 const baseUrl3 = 'https://i.y.qq.com';
@@ -221,38 +238,32 @@ export const searchApi = (params?: {
       return;
     }
     requestQQ({
-      url: '/soso/fcgi-bin/client_search_cp',
-      method: 'GET',
-      baseURL: baseUrl1,
-      params: {
-        g_tk: '938407465',
-        uin: 0,
-        format: 'json',
-        inCharset: 'utf-8',
-        outCharset: 'utf-8',
-        notice: 0,
-        platform: 'h5',
-        needNewCode: 1,
-        w: keyword,
-        zhidaqu: 1,
-        catZhida: 1,
-        t: 0,
-        flag: 1,
-        ie: 'utf-8',
-        sem: 1,
-        aggr: 0,
-        perpage: pageSize,
-        n: pageSize,
-        p: current,
-        remoteplace: 'txt.mqq.all',
-        _: 1459991037831,
+      url: '/cgi-bin/musicu.fcg',
+      method: 'POST',
+      baseURL: baseUrl2,
+      data: {
+        comm: {ct: '19', cv: '1859', uin: '0'},
+        req: {
+          method: 'DoSearchForQQMusicDesktop',
+          module: 'music.search.SearchCgiService',
+          param: {
+            grp: 1,
+            num_per_page: pageSize,
+            page_num: current,
+            query: keyword,
+            search_type: 0,
+          },
+        },
       },
     })
-      .then(({data}) => {
+      .then(res => {
+        const data = res?.req?.data?.body || {};
         const {song = {}} = data;
+        console.log(song.list.length);
+
         resolve({
           total: song.totalnum || 0,
-          list: (song.list || []).map(songItemCover),
+          list: (song.list || []).map(searchSongItemCover),
         });
       })
       .catch(err => {
