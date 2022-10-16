@@ -1,8 +1,17 @@
 import {NativeModules, ToastAndroid} from 'react-native';
 import {songItemState} from './types';
-import {getMusicUrlApi as qqMusicUrlApi} from '@/apis/qq';
-import {getMusicUrlApi as netEaseMusicUrlApi} from '@/apis/netEase';
-import {getMusicUrlApi as kugouMusicUrlApi} from '@/apis/kugou';
+import {
+  getMusicUrlApi as qqMusicUrlApi,
+  songDetailApi as qqSongDetailApi,
+} from '@/apis/qq';
+import {
+  getMusicUrlApi as netEaseMusicUrlApi,
+  songDetailApi as netEaseSongDetailApi,
+} from '@/apis/netEase';
+import {
+  getMusicUrlApi as kugouMusicUrlApi,
+  songDetailApi as kugouSongDetailApi,
+} from '@/apis/kugou';
 import TrackPlayer from 'react-native-track-player';
 //toast提示
 export const showToast = (text: string) => {
@@ -19,7 +28,7 @@ export const addSong = (song: songItemState) => {
   const service = apiMap[song.channel];
   service(song.songId)
     .then(async songUrl => {
-      const ids = `${song.channel}_${song.songId}`;
+      const ids = song.id;
       if (!songUrl) {
         showToast('获取播放路径失败！请切换渠道');
         return;
@@ -53,6 +62,17 @@ export const addSong = (song: songItemState) => {
     .catch(() => {
       showToast('获取播放路径失败！请切换渠道');
     });
+};
+export const getSongDetail = (song: songItemState) => {
+  const apiMap: {
+    [name: string]: (song: songItemState) => string;
+  } = {
+    QQ: qqSongDetailApi,
+    netEase: netEaseSongDetailApi,
+    kugou: kugouSongDetailApi,
+  };
+  const service = apiMap[song.channel];
+  return service(song);
 };
 export const previousSong = async () => {
   //原生的上一曲有bug 偶发返回不了 顶不住自己写

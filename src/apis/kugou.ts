@@ -126,6 +126,7 @@ const songItemCover = (song: JSONObject): songItemState => {
   const singer = Array.isArray(song.authors) ? song.authors : [];
   return {
     id: `kugou_${song.hash}`,
+    albumId: song.album_id,
     coverImage,
     songId: getMaxSizeFileHash(song.extra),
     name: song.songName,
@@ -260,4 +261,11 @@ export const searchApi = (params?: {
         reject(err);
       });
   });
+};
+//当前渠道歌曲详情
+export const songDetailApi = (song: songItemState) => {
+  return `https://www.kugou.com/song/#hash=${song.id.replace(
+    'kugou_',
+    '',
+  )}&album_id=${song?.albumId || ''}`;
 };

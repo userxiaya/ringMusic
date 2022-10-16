@@ -223,3 +223,7 @@ export const searchApi = (params?: {
       });
   });
 };
+//当前渠道歌曲详情
+export const songDetailApi = (song: songItemState) => {
+  return `https://music.163.com/#/song?id=${song.id.replace('netEase_', '')}`;
+};

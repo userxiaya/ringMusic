@@ -32,6 +32,7 @@ export type songItemState = {
   id: string;
   songId: string;
   songmid?: string;
+  albumId?: string;
   coverImage?: string; //歌曲图片
   name: string;
   isVip: boolean;

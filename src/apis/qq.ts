@@ -271,3 +271,10 @@ export const searchApi = (params?: {
       });
   });
 };
+//当前渠道歌曲详情
+export const songDetailApi = (song: songItemState) => {
+  return `https://y.qq.com/n/ryqq/songDetail/${song.id.replace(
+    'QQ_',
+    '',
+  )}?songtype=0`;
+};
