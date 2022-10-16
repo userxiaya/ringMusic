@@ -2,7 +2,7 @@ import Header from '@/components/header';
 import appTools from '@/utils/appTools';
 import {playDetail, songGroupItem} from '@/utils/types';
 import {useCreation, useRequest, useSafeState} from 'ahooks';
-import React, {useContext, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {Image, SafeAreaView, Text, View} from 'react-native';
 import {getPlayDetailApi as qqDetail} from '@/apis/qq';
 import {getPlayDetailApi as netEaseDetail} from '@/apis/netEase';
@@ -12,7 +12,6 @@ import {useRoute} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import RenderHtml from 'react-native-render-html';
 import style from './style';
-import {ThemeContext} from '@/store/theme';
 const apiMap: {
   [name: string]: (id: string) => Promise<playDetail>;
 } = {
@@ -47,10 +46,9 @@ const SongGroupDesc = () => {
       );
     }
   }, [playInfo, setBackground]);
-  const {state: theme} = useContext(ThemeContext);
   const headContainer = useCreation(() => {
-    return <Header color={theme?.text_color} />;
-  }, [theme]);
+    return <Header color={'#fff'} />;
+  }, []);
 
   const Desc = useCreation(() => {
     const source = {

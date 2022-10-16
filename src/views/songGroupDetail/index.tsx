@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {
   FlatList,
   Image,
@@ -22,7 +22,6 @@ import Header from '@/components/header';
 import styles from './style';
 import SongItem from '@/components/songItem';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {ThemeContext} from '@/store/theme';
 
 const apiMap: {
   [name: string]: (id: string) => Promise<playDetail>;
@@ -172,12 +171,12 @@ const SongGroupDetail = () => {
   const onHeadLayout = useMemoizedFn(({nativeEvent}: LayoutChangeEvent) => {
     setHeaderHeight(nativeEvent.layout.height);
   });
-  const {state: theme} = useContext(ThemeContext);
+
   const headContainer = useCreation(() => {
     const opacity = scrollY / 190; //列表头部元素高度
     return (
       <Header
-        color={theme?.text_color}
+        color={'#fff'}
         onLayout={onHeadLayout}
         title={opacity > 0.7 ? playInfo?.name : '歌单'}
         style={[styles.header]}
