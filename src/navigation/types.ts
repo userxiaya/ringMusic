@@ -6,7 +6,7 @@ export type RootStackParamList = {
   Home: undefined;
   PlayerScreen: {id: string};
   SongGroupDetail: songGroupItem;
-  WebContext: {url: string};
+  WebContext: {url: string; title?: string};
   SongGroupDesc: {id: string};
   NotFound: undefined;
   Search: undefined;

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   FlatList,
   Image,
@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import {useCreation, useMemoizedFn, useRequest, useSafeState} from 'ahooks';
 import {playDetail, songGroupItem, songItemState} from '@/utils/types';
-import appTools from '@/utils/appTools';
+import appTools, {getSongDetail} from '@/utils/appTools';
 import LinearGradient from 'react-native-linear-gradient';
 import {getPlayDetailApi as qqDetail} from '@/apis/qq';
 import {getPlayDetailApi as netEaseDetail} from '@/apis/netEase';
@@ -22,6 +22,7 @@ import Header from '@/components/header';
 import styles from './style';
 import SongItem from '@/components/songItem';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import ActionSheet from 'react-native-actionsheet';
 
 const apiMap: {
   [name: string]: (id: string) => Promise<playDetail>;
@@ -119,7 +120,13 @@ const SongGroupDetail = () => {
   }, [route.params]);
   const {songChannel} = params;
   const service = apiMap[songChannel];
-
+  const actionRef = useRef<any>(null);
+  const actionItem = useRef<songItemState | null>(null);
+  const navigation = useNavigation();
+  const showAction = useMemoizedFn((item: songItemState) => {
+    actionItem.current = item;
+    actionRef.current?.show();
+  });
   //渐变色
   const LinearColors = useCreation(() => {
     const defaultColor = [
@@ -200,9 +207,9 @@ const SongGroupDetail = () => {
     return <Text style={[styles.footer]}>{text}</Text>;
   }, [loading]);
   const renderItem = useMemoizedFn(
-    ({item, index}: {item: songItemState; index: number}) => {
-      return <SongItem item={item} index={index + 1} />;
-    },
+    ({item, index}: {item: songItemState; index: number}) => (
+      <SongItem item={item} index={index + 1} moreClick={showAction} />
+    ),
   );
   const onScroll = useMemoizedFn(
     ({nativeEvent}: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -228,6 +235,27 @@ const SongGroupDetail = () => {
     <SafeAreaView style={[styles.container]}>
       {headContainer}
       {listContainer}
+      <ActionSheet
+        ref={actionRef}
+        title={'歌曲信息'}
+        options={['分享', '链接', '歌手', '取消']}
+        cancelButtonIndex={3}
+        destructiveButtonIndex={0}
+        onPress={index => {
+          if (index === 1) {
+            actionItem?.current &&
+              navigation.navigate({
+                name: 'WebContext',
+                params: {
+                  url: getSongDetail(actionItem.current),
+                  title: actionItem.current.name,
+                },
+                merge: true,
+              });
+          }
+          actionItem.current = null;
+        }}
+      />
     </SafeAreaView>
   );
 };

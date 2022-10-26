@@ -2,13 +2,12 @@ import React from 'react';
 import {Text, View, Image, TouchableHighlight} from 'react-native';
 import {SingerItem, songItemState} from '@/utils/types';
 import styles from './style';
-import {addSong, getSongDetail} from '@/utils/appTools';
-import {useNavigation} from '@react-navigation/native';
-import {useMemoizedFn} from 'ahooks';
+import {addSong} from '@/utils/appTools';
 
 interface SongItemProps {
   item: songItemState;
   index?: number;
+  moreClick?: (item: songItemState) => void;
 }
 const getSingerName = (singer?: SingerItem[]) => {
   if (!singer) {
@@ -18,15 +17,7 @@ const getSingerName = (singer?: SingerItem[]) => {
   return result.join('/');
 };
 
-const SongItem = ({item}: SongItemProps) => {
-  const navigation = useNavigation();
-  const toSongChannelPage = useMemoizedFn(() => {
-    navigation.navigate({
-      name: 'WebContext',
-      params: {url: getSongDetail(item)},
-      merge: true,
-    });
-  });
+const SongItem = ({item, moreClick}: SongItemProps) => {
   return (
     <TouchableHighlight
       underlayColor="#DDDDDD"
@@ -46,7 +37,7 @@ const SongItem = ({item}: SongItemProps) => {
           <TouchableHighlight
             underlayColor="#DDDDDD"
             onPress={() => {
-              toSongChannelPage();
+              moreClick?.(item);
             }}>
             <Image
               style={[styles.more]}

@@ -1,6 +1,7 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {FlatList, SafeAreaView, StyleSheet, Text} from 'react-native';
 import SearchBar from '@/components/searchBar';
+import ActionSheet from 'react-native-actionsheet';
 import {
   useCreation,
   useDebounce,
@@ -17,6 +18,8 @@ import SongItem from '@/components/songItem';
 import {WhiteSpace} from '@ant-design/react-native';
 import {footer} from '@/themeStyle';
 import {uniqBy} from 'lodash';
+import {useNavigation} from '@react-navigation/native';
+import {getSongDetail} from '@/utils/appTools';
 interface searchParams {
   current?: number;
   pageSize?: number;
@@ -52,12 +55,19 @@ interface ListContainerProps {
   channel: songChannel;
 }
 function ListContainer(props: ListContainerProps) {
+  const actionRef = useRef<any>(null);
+  const actionItem = useRef<songItemState | null>(null);
+  const showAction = useMemoizedFn((item: songItemState) => {
+    actionItem.current = item;
+    actionRef.current?.show();
+  });
   const [state, setState] = useSetState<StateList>({
     current: 0,
     loading: false,
     noMore: false,
     reloading: false,
   });
+  const navigation = useNavigation();
   const searchText = useDebounce(props.keyword, {wait: 500});
   //监听channel改变 生成新的请求方法
   const searchService = useCallback(
@@ -117,7 +127,7 @@ function ListContainer(props: ListContainerProps) {
   });
   const renderItem = useMemoizedFn(
     ({item, index}: {item: songItemState; index: number}) => {
-      return <SongItem item={item} index={index + 1} />;
+      return <SongItem item={item} index={index + 1} moreClick={showAction} />;
     },
   );
   const listFooter = useCreation(() => {
@@ -137,6 +147,27 @@ function ListContainer(props: ListContainerProps) {
         renderItem={renderItem}
         keyExtractor={item => item.id}
         ListFooterComponent={listFooter}
+      />
+      <ActionSheet
+        ref={actionRef}
+        title={'歌曲信息'}
+        options={['分享', '链接', '歌手', '取消']}
+        cancelButtonIndex={3}
+        destructiveButtonIndex={0}
+        onPress={index => {
+          if (index === 1) {
+            actionItem?.current &&
+              navigation.navigate({
+                name: 'WebContext',
+                params: {
+                  url: getSongDetail(actionItem.current),
+                  title: actionItem.current.name,
+                },
+                merge: true,
+              });
+          }
+          actionItem.current = null;
+        }}
       />
     </>
   );
